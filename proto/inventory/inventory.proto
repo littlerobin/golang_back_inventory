@@ -1,0 +1,230 @@
+//********************************************************************************************
+// By Emran A. Hamdan : 10/10/2019
+// Here we defined gPRC protobuf data service/api this is important design , later API will be generated
+// we must spend more time on design how it will called , param & return data
+////////////////////////////////////////
+syntax = "proto3";
+
+package go.micro.srv.inventory;
+
+service Inventory {
+	rpc ReadSupplier(Request) returns (Supplier) {}
+	rpc SaveSupplier(Supplier) returns (Confirm) {}
+	rpc ProcessSupplier(Filter) returns (SupplierBigData) {}
+	rpc GetAllSupplier(EmptyRequest) returns (SupplierBigData) {}
+	rpc UpdateSupplier(Supplier) returns (Confirm) {}
+	rpc DeleteSupplier(Request) returns (Confirm) {}
+
+	rpc ReadPurchaseOrder(Request) returns (PurchaseOrder) {}
+	rpc SavePurchaseOrder(PurchaseOrder) returns (Confirm) {}
+	rpc ProcessPurchaseOrder(Filter) returns (PurchaseOrderBigData) {}
+	rpc GetAllPurchaseOrder(EmptyRequest) returns (PurchaseOrderBigData) {}
+	rpc UpdatePurchaseOrder(PurchaseOrder) returns (Confirm) {}
+	rpc DeletePurchaseOrder(Request) returns (Confirm) {}
+
+	rpc ReadDeliveryNote(Request) returns (DeliveryNote) {}
+	rpc SaveDeliveryNote(DeliveryNote) returns (Confirm) {}
+	rpc ProcessDeliveryNote(Filter) returns (DeliveryNoteBigData) {}
+	rpc GetAllDeliveryNote(EmptyRequest) returns (DeliveryNoteBigData) {}
+	rpc UpdateDeliveryNote(DeliveryNote) returns (Confirm) {}
+	rpc DeleteDeliveryNote(Request) returns (Confirm) {}
+
+	 rpc ReadMasterStock(Request) returns (MasterStock) {}
+	 rpc SaveMasterStock(MasterStock) returns (Confirm) {}
+	 rpc ProcessMasterStock(Filter) returns (MasterStockBigData) {}
+	rpc GetAllMasterStock(EmptyRequest) returns (MasterStockBigData) {}
+	rpc UpdateMasterStock(MasterStock) returns (Confirm) {}
+	rpc DeleteMasterStock(Request) returns (Confirm) {}
+
+	 rpc ReadStockPool(Request) returns (StockPool) {}
+	 rpc SaveStockPool(StockPool) returns (Confirm) {}
+	 rpc ProcessStockPool(Filter) returns (StockPoolBigData) {}
+	rpc GetAllStockPool(EmptyRequest) returns (StockPoolBigData) {}
+	rpc UpdateStockPool(StockPool) returns (Confirm) {}
+	rpc DeleteStockPool(Request) returns (Confirm) {}
+
+	 rpc ReadShippingEvent(Request) returns (ShippingEvent) {}
+	 rpc SaveShippingEvent(ShippingEvent) returns (Confirm) {}
+	 rpc ProcessShippingEvent(Filter) returns (ShippingEventBigData) {}
+	rpc GetAllShippingEvent(EmptyRequest) returns (ShippingEventBigData) {}
+	rpc UpdateShippingEvent(ShippingEvent) returns (Confirm) {}
+	rpc DeleteShippingEvent(Request) returns (Confirm) {}
+
+}
+message EmptyRequest{}
+
+// our example Supplier data
+message Supplier {
+	 int32 supplierId = 1;
+	 string nameEn = 2;
+	 string nameAr = 3;
+	 string createAt = 4;
+	 string updateAt = 5;
+	 string createBy = 6;
+	 string updateBy = 7;
+	 string approvedBy = 8;
+	 string approveDate = 9;
+	 string class = 10;
+	 string OEM = 11;
+	 string exclusive = 12;
+	 string payments = 13;
+	 int32 days = 14;
+	 repeated string brands = 15;
+	 string agreementType = 16;
+	 string startDate = 17;
+	 string expiryDate = 18;
+	 string renewal = 19;
+	 string agreementPDF = 20;
+
+	message Contacts {
+	   string name = 1;
+	   string address = 2;
+	   string tel = 3;
+	   string mobile = 4;
+	   string email = 5;
+	   string web = 6;
+	   string designations = 7;
+	}
+	repeated Contacts contacts = 21;
+  }
+
+// send id in the required to read
+message Request {
+	string id 	= 1;
+}
+// return one  Supplier //not used
+message SupplierResponse {
+	repeated Supplier suppliers = 1;
+}
+message Confirm {
+		int32 status = 1;
+		string msg = 2;
+}
+message Filter {
+		string filter = 1;
+		string search = 2;
+}
+// return all Supplier that satisfy filter
+message SupplierBigData {
+	repeated Supplier suppliers = 1;
+}
+
+//Product Owner
+message PurchaseOrder {
+	int32 po = 1;
+	string createAt = 2;
+	string updateAt = 3;
+	string createBy = 4;
+	string updateBy = 5;
+	string supplier = 6;
+	int32 batchID = 7;
+	string batchDate = 8;
+	string desc = 9;
+   message Items {
+	int32 productID = 1;
+	  string desc = 2;
+	  int32 qty = 3;
+	  double price = 4;
+   }
+   repeated Items items = 10;
+ }
+ message PurchaseOrderResponse {
+	PurchaseOrder purchaseOrder = 1;
+}
+// return all DeliveryNote that satisfy filter
+message PurchaseOrderBigData {
+	repeated PurchaseOrder purchaseOrders = 1;
+}
+
+
+ //Delivery Note
+ message DeliveryNote {
+	int32 deliveryId = 1;
+	int32 refPO = 2;
+	string createdAt = 3;
+	string updateAt = 4;
+	string createdBy = 5;
+	string updateBy = 6;
+	string note = 7;
+
+   message Items {
+	int32 productId = 1;
+	  string desc = 2;
+	  int32 orderedQty = 3;
+	  int32 recviedQty = 4;
+   }
+
+   repeated Items items = 8;
+ }
+
+ message DeliveryNoteResponse {
+	DeliveryNote deliveryNote = 1;
+}
+// return all DeliveryNote that satisfy filter
+message DeliveryNoteBigData {
+	repeated DeliveryNote deliveryNotes = 1;
+}
+
+ //Master stock
+ message MasterStock {
+	int32 id = 1;
+	int32 po = 2;
+	int32 deliveryNote = 3;
+	int32 total = 4;
+	int32 productid =5;
+	int32 supplierId = 6;
+
+   message Items {
+	  double serial = 1;
+	  string pin = 2;
+	  string expiryDate = 3;
+	  string status = 4;
+   }
+   repeated Items items = 7;
+ }
+
+ message MasterStockResponse {
+	MasterStock masterStock = 1;
+}
+// return all MasterStock that satisfy filter
+message MasterStockBigData {
+	repeated MasterStock masterStocks = 1;
+}
+ //Stock pool
+ message StockPool {
+	int32 poolId = 1;
+	string createAt = 2;
+	string updateAt = 3;
+	string createBy = 4;
+	string updateBy = 5;
+	int32 startSerial = 6;
+	int32 endSerial = 7;
+	string status = 8;
+	int32 total = 9;
+	int32 totalSold = 10;
+	int32 remaining =11;
+ }
+
+ message StockPoolResponse {
+	StockPool stockPool = 1;
+}
+// return all ShippingEvent that satisfy filter
+message StockPoolBigData {
+	repeated StockPool stockPools = 1;
+}
+//Shipping Event
+ message ShippingEvent {
+	int32 orderId = 1;
+	string createAt = 2;
+	string itemType = 3;
+	int32 itemsSerial = 4;
+	string events = 5;
+ }
+
+ message ShippingEventResponse {
+	ShippingEvent shippingEvent = 1;
+}
+// return all ShippingEvent that satisfy filter
+message ShippingEventBigData {
+	repeated ShippingEvent shippingEvents = 1;
+}
